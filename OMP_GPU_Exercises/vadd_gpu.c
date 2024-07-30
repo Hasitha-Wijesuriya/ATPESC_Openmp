@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <omp.h>
 #define N 100000
 #define TOL  0.0000001
 //
@@ -25,12 +24,12 @@ int main()
 
    // add two vectors
    #pragma omp target
+   #pragma omp loop
    for (int i=0; i<N; i++){
       c[i] = a[i] + b[i];
    }
 
    // test results
-   #pragma omp parallel for reduction(+:err)
    for(int i=0;i<N;i++){
       float val = c[i] - res[i];
       val = val*val;
