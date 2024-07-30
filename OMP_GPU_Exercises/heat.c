@@ -130,6 +130,7 @@ int main(int argc, char *argv[]) {
 
   // Start the solve timer
   double tic = omp_get_wtime();
+  #pragma omp target teams distribute parallel for simd
   for (int t = 0; t < nsteps; ++t) {
 
     // Call the solve kernel
@@ -180,7 +181,7 @@ void initial_value(const int n, const double dx, const double length, double * r
     }
     y += dx; // Physical y position
   }
-
+   #pragma omp target enter data map(to: u[0:n*n])
 }
 
 
@@ -225,8 +226,8 @@ void solve(const int n, const double alpha, const double dx, const double dt, co
 //  }
 
 #else
-  #pragma omp target map (to: u[0:n*n]) map(tofrom: u_tmp[0:n*n])
-  #pragma omp loop
+
+  #pragma omp target teams distribute parallel for simd
   for (int i = 0; i < n; ++i) {
     for (int j = 0; j < n; ++j) {
 
@@ -239,6 +240,7 @@ void solve(const int n, const double alpha, const double dx, const double dt, co
       r * ((j > 0)   ? u[i+(j-1)*n] : 0.0);
     }
   }
+  #pragma omp target exit data map(from: u_tmp[0:n*n])
 #endif
 }
 
