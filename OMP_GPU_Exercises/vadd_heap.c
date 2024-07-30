@@ -22,6 +22,7 @@ int main()
     int err=0;
 
    // fill the arrays
+
    for (int i=0; i<N; i++){
       a[i] = (float)i;
       b[i] = 2.0*(float)i;
@@ -30,8 +31,11 @@ int main()
    }
 
    // add two vectors
+   #pragma omp target map(to: a[0:N], b[0:N]) map(tofrom: c[0:N])
+   {
    for (int i=0; i<N; i++){
       c[i] = a[i] + b[i];
+   }
    }
 
    // test results
