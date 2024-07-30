@@ -225,6 +225,8 @@ void solve(const int n, const double alpha, const double dx, const double dt, co
 //  }
 
 #else
+  #pragma omp target map (to: u[0:n*n]) map(tofrom: u_tmp[0:n*n])
+  #pragma omp loop
   for (int i = 0; i < n; ++i) {
     for (int j = 0; j < n; ++j) {
 
